@@ -22,7 +22,7 @@ cask "animeko@alpha" do
     conflicts_with cask: "animeko"
 
     livecheck do
-        url :url
+        url "https://github.com/open-ani/animeko/releases"
         strategy :page_match
         regex(/v?(\d+(?:\.\d+)+(?:-alpha\d+)?)/i)
     end

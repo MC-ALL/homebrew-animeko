@@ -22,7 +22,6 @@ cask "animeko" do
     conflicts_with cask: "animeko@alpha"
 
     livecheck do
-        url :url
         strategy :github_latest
     end
 
