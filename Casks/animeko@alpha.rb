@@ -1,4 +1,4 @@
-cask "animeko" do
+cask "animeko@alpha" do
     arch arm:   "aarch64",
          intel: "x86_64"
 
