@@ -10,19 +10,19 @@ This is an unofficial tap for animeko. Use at your own risk.
 
 ```shell
 brew tap MC-ALL/animeko
-brew install animeko
+brew install --no-quarantine animeko
 ```
 
 or
 
 ```shell
-brew install MC-ALL/animeko/animeko
+brew install --no-quarantine MC-ALL/animeko/animeko
 ```
 
 ## Alpha version
 
 ```shell
-brew install MC-ALL/animeko/animeko@alpha
+brew install --no-quarantine MC-ALL/animeko/animeko@alpha
 ```
 
 ## Also see
