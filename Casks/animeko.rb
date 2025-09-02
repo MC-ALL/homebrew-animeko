@@ -19,6 +19,7 @@ cask "animeko" do
     name "Animeko"
     desc "集找番、追番、看番的一站式弹幕追番平台"
     homepage "https://animeko.org/"
+    conflicts_with cask: "animeko@alpha"
 
     livecheck do
         url :url
