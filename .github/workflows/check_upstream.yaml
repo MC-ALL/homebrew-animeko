@@ -136,6 +136,9 @@ jobs:
           fi          
 
   trigger_bump:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: collect
     if: ${{ needs.collect.outputs.update_required == 'true' }}
     strategy:
