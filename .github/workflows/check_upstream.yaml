@@ -18,8 +18,10 @@ jobs:
         release_type: ['stable', 'alpha']
         include:
           - release_type: 'stable'
+            cask_name: 'animeko'
             cask_filename: 'animeko.rb'
           - release_type: 'alpha'
+            cask_name: 'animeko@alpha'
             cask_filename: 'animeko@alpha.rb'
     steps:
       - name: Clone Casks Repo
@@ -55,7 +57,6 @@ jobs:
           echo "upstream alpha version: ${ALPHA_VERSION:-None}"
           
           STABLE_VERSION="$CANDIDATE_VERSION"
-          FINAL_CHOICE=""
           
           WINNER=$(echo -e "$STABLE_VERSION\n$ALPHA_VERSION" | sort -V | tail -n 1)
 
@@ -70,10 +71,6 @@ jobs:
       - name: Summary
         id: summary
         run: |
-          if [ -z "$CANDIDATE_VERSION" ]; then
-            exit 1
-          fi
-
           CLEAN_VERSION="${CANDIDATE_VERSION#v}"
 
           echo "target cask filename: ${{ matrix.cask_filename }}"
