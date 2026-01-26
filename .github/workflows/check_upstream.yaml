@@ -5,11 +5,12 @@ on:
     - cron: '5 5 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-slim
-    permissions:
-      contents: read
     env: 
       UPSTREAM_REPO: 'open-ani/animeko'
     strategy:
@@ -31,7 +32,7 @@ jobs:
           fetch-depth: '1'
 
       - name: Check Cask Version (Local)
-        id : check_cask_version_loacl
+        id : check_cask_version_local
         working-directory: ./Casks
         run: |
           CASK_VERSION=$(grep 'version "' ${{ matrix.cask_filename }} | cut -d '"' -f 2)
@@ -74,14 +75,74 @@ jobs:
           CLEAN_VERSION="${CANDIDATE_VERSION#v}"
 
           echo "target cask filename: ${{ matrix.cask_filename }}"
-          echo "local cask version: ${{ steps.check_cask_version_loacl.outputs.cask_version }}"
+          echo "local cask version: ${{ steps.check_cask_version_local.outputs.cask_version }}"
           echo "candidate upstream version: $CLEAN_VERSION"
-          echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
 
-          if [ "$CLEAN_VERSION" != "${{ steps.check_cask_version_loacl.outputs.cask_version }}" ]; then
+          if [ "$CLEAN_VERSION" != "${{ steps.check_cask_version_local.outputs.cask_version }}" ]; then
             echo "found a new upstream version, update available!"
-            echo "${{ steps.check_cask_version_loacl.outputs.cask_version }} -> $CLEAN_VERSION"
+            echo "${{ steps.check_cask_version_local.outputs.cask_version }} -> $CLEAN_VERSION"
+
+            JSON_STRING=$(jq -n --arg name "${{ matrix.cask_name }}" --arg ver "$CLEAN_VERSION" '{"cask_name": $name, "version": $ver}')
+            
+            echo "$JSON_STRING" > summary.json            
+            echo "update_required=true" >> $GITHUB_OUTPUT
+
           else
             echo "already up to date!"
+
+            echo "update_required=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Upload Summary
+        id: upload_summary
+        uses: actions/upload-artifact@v6
+        if: steps.summary.outputs.update_required == 'true'
+        with:
+          name: update_required_${{ matrix.release_type }}
+          path: summary.json
+          retention-days: 1
+
+  collect:
+    needs: check
+    runs-on: ubuntu-slim
+    outputs:
+      gen_matrix: ${{ steps.gen_matrix_json.outputs.gen_matrix }}
+      update_required: ${{ steps.gen_matrix_json.outputs.update_required }}
+
+    steps:
+      - name: Download Summarys
+        id: download_summarys
+        uses: actions/download-artifact@v7
+        with:
+          pattern: update_required_*
+          merge-multiple: true
+          path: ./download_summarys
+
+      - name: Generate Matrix Json
+        id: gen_matrix_json
+        run: |
+          if [ -d "./download_summarys" ] && [ "$(ls -A ./download_summarys)" ]; then
+            echo "summarys found!"
+            
+            COMBINED_JSON=$(jq -s '.' ./download_summarys/*.json | jq -c .)            
+            echo "generated matrix json: $COMBINED_JSON"
+            
+            echo "gen_matrix=$COMBINED_JSON" >> "$GITHUB_OUTPUT"
+            echo "update_required=true" >> "$GITHUB_OUTPUT"
+          
+          else
+            echo "no summarys found!"
+            echo "update_required=false" >> "$GITHUB_OUTPUT"
+          fi          
+
+  trigger_bump:
+    needs: collect
+    if: ${{ needs.collect.outputs.update_required == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.collect.outputs.gen_matrix) }}
+    uses: ./.github/workflows/bump_casks.yaml
+    with:
+      cask_name: ${{ matrix.cask_name }}
+      version: ${{ matrix.version }}
