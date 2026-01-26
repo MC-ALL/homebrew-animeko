@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-slim
     env: 
-      UPSTREAM_REPO: 'openani/animeko'
+      UPSTREAM_REPO: 'open-ani/animeko'
     strategy:
       fail-fast: false
       matrix:
