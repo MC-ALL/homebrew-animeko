@@ -1,0 +1,47 @@
+name: Bump Casks
+
+on:
+  workflow_dispatch:
+    inputs:
+      cask_name:
+        description: 'Cask Token (e.g. animeko or animeko@alpha)'
+        required: true
+      version:
+        description: 'New Version (e.g. 5.1.0 or 5.2.0-alpha01)'
+        required: true
+  workflow_call:
+    inputs:
+        cask_name:
+            required: true
+            type: string
+        version:
+            required: true
+            type: string
+
+jobs:
+  bump:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Setup Homebrew
+        id: setup_homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Configure Git
+        id: configure_git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump Cask and Create PR
+        id: bump_cask_and_create_pr
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # brew tap ${{ github.repository }}
+
+          echo "bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
+
+          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --online --no-browse
