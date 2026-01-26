@@ -8,6 +8,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     env: 
       UPSTREAM_REPO: 'open-ani/animeko'
     strategy:
@@ -36,32 +38,36 @@ jobs:
 
       - name: Check Upstream Version (Stable)
         id: check_upstream_version_stable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          STABLE_VERSION=$(gh release view "$UPSTREAM_REPO" --json tagName -q .tagName 2>/dev/null || echo "")
+          STABLE_VERSION=$(gh release view --repo "$UPSTREAM_REPO" --json tagName -q .tagName)
           echo "upstream stable version: ${STABLE_VERSION:-None}"
           echo "CANDIDATE_VERSION=$STABLE_VERSION" >> $GITHUB_ENV
 
       - name: Check Upstream Version (Alpha)
         id: check_upstream_version_alpha
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.release_type == 'alpha'
         run: |
           ALPHA_VERSION=$(gh release list --repo "$UPSTREAM_REPO" --limit 10 --json tagName,isPrerelease -q 'map(select(.isPrerelease)) | first | .tagName')
           echo "upstream alpha version: ${ALPHA_VERSION:-None}"
           
-          STABLE_VERSON="$CANDIDATE_VERSION"
+          STABLE_VERSION="$CANDIDATE_VERSION"
           FINAL_CHOICE=""
           
           if [ -z "$ALPHA_VERSION" ]; then
-            FINAL_CHOICE=$STABLE_VERSON
+            FINAL_CHOICE=$STABLE_VERSION
           elif [ -z "$STABLE_VERSION" ]; then
             FINAL_CHOICE=$ALPHA_VERSION
           else
-            WINNER=$(echo -e "$STABLE_VERSON\n$ALPHA_VERSION" | sort -V | tail -n 1)
+            WINNER=$(echo -e "$STABLE_VERSION\n$ALPHA_VERSION" | sort -V | tail -n 1)
 
             if [ "$WINNER" == "$ALPHA_VERSION" ]; then
                 FINAL_CHOICE="$ALPHA_VERSION"
             else
-                FINAL_CHOICE="$STABLE_VERSON"
+                FINAL_CHOICE="$STABLE_VERSION"
             fi
           fi
           
