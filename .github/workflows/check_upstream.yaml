@@ -1,0 +1,82 @@
+name: Check Upstream
+
+on:
+  schedule:
+    - cron: '5 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-slim
+    env: 
+      UPSTREAM_REPO: 'openani/animeko'
+    strategy:
+      fail-fast: false
+      matrix:
+        release_type: ['stable', 'alpha']
+        include:
+          - release_type: 'stable'
+            cask_filename: 'animeko.rb'
+          - release_type: 'alpha'
+            cask_filename: 'animeko@alpha.rb'
+    steps:
+      - name: Clone Casks Repo
+        id: clone_repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: '1'
+
+      - name: Check Cask Version (Local)
+        id : check_cask_version_loacl
+        working-directory: ./Casks
+        run: |
+          CASK_VERSION=$(grep 'version "' ${{ matrix.cask_filename }} | cut -d '"' -f 2)
+          echo "local cask version(${{ matrix.release_type }}): $CASK_VERSION"
+          echo "cask_version=$CASK_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check Upstream Version (Stable)
+        id: check_upstream_version_stable
+        run: |
+          STABLE_VERSION=$(gh release view "$UPSTREAM_REPO" --json tagName -q .tagName 2>/dev/null || echo "")
+          echo "upstream stable version: ${STABLE_VERSION:-None}"
+          echo "CANDIDATE_VERSION=$STABLE_VERSION" >> $GITHUB_ENV
+
+      - name: Check Upstream Version (Alpha)
+        id: check_upstream_version_alpha
+        if: matrix.release_type == 'alpha'
+        run: |
+          ALPHA_VERSION=$(gh release list --repo "$UPSTREAM_REPO" --limit 10 --json tagName,isPrerelease -q 'map(select(.isPrerelease)) | first | .tagName')
+          echo "upstream alpha version: ${ALPHA_VERSION:-None}"
+          
+          STABLE_VERSON="$CANDIDATE_VERSION"
+          FINAL_CHOICE=""
+          
+          if [ -z "$ALPHA_VERSION" ]; then
+            FINAL_CHOICE=$STABLE_VERSON
+          elif [ -z "$STABLE_VERSION" ]; then
+            FINAL_CHOICE=$ALPHA_VERSION
+          else
+            WINNER=$(echo -e "$STABLE_VERSON\n$ALPHA_VERSION" | sort -V | tail -n 1)
+
+            if [ "$WINNER" == "$ALPHA_VERSION" ]; then
+                FINAL_CHOICE="$ALPHA_VERSION"
+            else
+                FINAL_CHOICE="$STABLE_VERSON"
+            fi
+          fi
+          
+          echo "CANDIDATE_VERSION=$FINAL_CHOICE" >> $GITHUB_ENV
+
+      - name: Summary
+        id: summary
+        run: |
+          if [ -z "$CANDIDATE_VERSION" ]; then
+            exit 1
+          fi
+
+          CLEAN_VERSION="${CANDIDATE_VERSION#v}"
+
+          echo "candidate upstream version: $CLEAN_VERSION"
+          echo "target cask filename: ${{ matrix.cask_filename }}"
+          echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+
