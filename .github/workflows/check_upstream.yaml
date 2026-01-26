@@ -57,18 +57,12 @@ jobs:
           STABLE_VERSION="$CANDIDATE_VERSION"
           FINAL_CHOICE=""
           
-          if [ -z "$ALPHA_VERSION" ]; then
-            FINAL_CHOICE=$STABLE_VERSION
-          elif [ -z "$STABLE_VERSION" ]; then
-            FINAL_CHOICE=$ALPHA_VERSION
-          else
-            WINNER=$(echo -e "$STABLE_VERSION\n$ALPHA_VERSION" | sort -V | tail -n 1)
+          WINNER=$(echo -e "$STABLE_VERSION\n$ALPHA_VERSION" | sort -V | tail -n 1)
 
-            if [ "$WINNER" == "$ALPHA_VERSION" ]; then
-                FINAL_CHOICE="$ALPHA_VERSION"
-            else
-                FINAL_CHOICE="$STABLE_VERSION"
-            fi
+          if [ "$WINNER" == "$ALPHA_VERSION" ]; then
+              FINAL_CHOICE="$ALPHA_VERSION"
+          else
+              FINAL_CHOICE="$STABLE_VERSION"
           fi
           
           echo "CANDIDATE_VERSION=$FINAL_CHOICE" >> $GITHUB_ENV
@@ -85,4 +79,11 @@ jobs:
           echo "candidate upstream version: $CLEAN_VERSION"
           echo "target cask filename: ${{ matrix.cask_filename }}"
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+
+          if [ "$CLEAN_VERSION" != "${{ steps.check_cask_version_loacl.outputs.cask_version }}" ]; then
+            echo "found new version, update available"
+            echo "${{ steps.check_cask_version_loacl.outputs.cask_version }} -> $CLEAN_VERSION"
+          else
+            echo "already updated"
+          fi
 
