@@ -76,14 +76,15 @@ jobs:
 
           CLEAN_VERSION="${CANDIDATE_VERSION#v}"
 
-          echo "candidate upstream version: $CLEAN_VERSION"
           echo "target cask filename: ${{ matrix.cask_filename }}"
+          echo "local cask version: ${{ steps.check_cask_version_loacl.outputs.cask_version }}"
+          echo "candidate upstream version: $CLEAN_VERSION"
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
 
           if [ "$CLEAN_VERSION" != "${{ steps.check_cask_version_loacl.outputs.cask_version }}" ]; then
-            echo "found new version, update available"
+            echo "found a new upstream version, update available!"
             echo "${{ steps.check_cask_version_loacl.outputs.cask_version }} -> $CLEAN_VERSION"
           else
-            echo "already updated"
+            echo "already up to date!"
           fi
 
