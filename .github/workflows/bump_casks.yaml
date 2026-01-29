@@ -44,12 +44,19 @@ jobs:
 
           echo "bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
 
-          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only --commit
+          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "${{ inputs.cask_name }} ${{ inputs.version }}"
           branch: "bump/${{ inputs.cask_name }}-${{ inputs.version }}"
+          title: "Bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
+          body: |
+            Automated update via `bump_casks` workflow.
+            
+            - Cask: `${{ inputs.cask_name }}`
+            - Version: `${{ inputs.version }}`
           delete-branch: true
-          sign-commits: true
+          signoff: true
