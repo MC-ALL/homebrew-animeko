@@ -29,13 +29,13 @@ jobs:
         id: setup_homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      - name: Configure Git
-        id: configure_git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      # - name: Configure Git
+      #   id: configure_git
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump Cask and Create PR
+      - name: Bump Cask
         id: bump_cask_and_create_pr
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,4 +44,13 @@ jobs:
 
           echo "bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
 
-          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit
+          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "${{ inputs.cask_name }} ${{ inputs.version }}"
+          branch: "bump/${{ inputs.cask_name }}-${{ inputs.version }}"
+          delete-branch: true
+          sign-commits: true
