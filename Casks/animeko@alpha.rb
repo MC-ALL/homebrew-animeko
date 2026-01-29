@@ -12,7 +12,7 @@ cask "animeko@alpha" do
     end
   
     on_intel do
-        url "https://github.com/open-ani/animeko/releases/ani-#{version}-macos-#{arch}.zip",
+        url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
             verified: "github.com/open-ani/animeko/releases/"
     end
 
@@ -24,7 +24,7 @@ cask "animeko@alpha" do
     livecheck do
         url "https://api.github.com/repos/open-ani/animeko/releases"
         strategy :page_match
-        regex(/v?(\d+(?:\.\d+)+(?:-alpha\d+))/i)
+        regex(/v?(\d+(?:\.\d+)+(?:-(?:alpha|beta)\d+))/i)
     end
 
     auto_updates true

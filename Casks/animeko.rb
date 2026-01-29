@@ -12,7 +12,7 @@ cask "animeko" do
     end
   
     on_intel do
-        url "https://github.com/open-ani/animeko/releases/ani-#{version}-macos-#{arch}.zip",
+        url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
             verified: "github.com/open-ani/animeko/releases/"
     end
 
