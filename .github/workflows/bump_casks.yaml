@@ -29,19 +29,11 @@ jobs:
         id: setup_homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      # - name: Configure Git
-      #   id: configure_git
-      #   run: |
-      #     git config --global user.name "github-actions[bot]"
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Bump Cask
         id: bump_cask_and_create_pr
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # brew tap ${{ github.repository }}
-
           echo "bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
 
           brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only
@@ -60,3 +52,6 @@ jobs:
             - Version: `${{ inputs.version }}`
           delete-branch: true
           signoff: true
+          sign-commits: true
+          reviewers: ${{ github.repository_owner }}
+          maintainer-can-modify: false
