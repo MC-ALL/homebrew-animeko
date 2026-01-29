@@ -44,7 +44,7 @@ jobs:
 
           echo "bump ${{ inputs.cask_name }} to ${{ inputs.version }}"
 
-          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only
+          brew bump-cask-pr "${{ inputs.cask_name }}" --version "${{ inputs.version }}" --verbose --no-browse --no-audit --write-only --commit
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
