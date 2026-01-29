@@ -49,7 +49,6 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "${{ inputs.cask_name }} ${{ inputs.version }}"
           branch: "bump/${{ inputs.cask_name }}-${{ inputs.version }}"
           delete-branch: true
