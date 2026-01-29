@@ -19,20 +19,20 @@ cask "animeko" do
     name "Animeko"
     desc "集找番、追番、看番的一站式弹幕追番平台"
     homepage "https://animeko.org/"
-    conflicts_with cask: "animeko@alpha"
 
     livecheck do
         strategy :github_latest
     end
 
-    auto_updates true
+    auto_updates true    
+    conflicts_with cask: "animeko@alpha"
     depends_on macos: ">= :catalina"
 
     app "Ani.app"
 
     zap trash: [
-        "~/Library/Application Support/me.Him188.Ani",
-        "~/Library/Caches/me.Him188.Ani",
-        "~/Library/Preferences/me.him188.ani.app.desktop.plist",
+      "~/Library/Application Support/me.Him188.Ani",
+      "~/Library/Caches/me.Him188.Ani",
+      "~/Library/Preferences/me.him188.ani.app.desktop.plist",
     ]
 end

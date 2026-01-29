@@ -19,7 +19,6 @@ cask "animeko@alpha" do
     name "Animeko"
     desc "集找番、追番、看番的一站式弹幕追番平台"
     homepage "https://animeko.org/"
-    conflicts_with cask: "animeko"
 
     livecheck do
         url "https://api.github.com/repos/open-ani/animeko/releases"
@@ -27,14 +26,15 @@ cask "animeko@alpha" do
         regex(/v?(\d+(?:\.\d+)+(?:-(?:alpha|beta)\d+))/i)
     end
 
-    auto_updates true
+    auto_updates true    
+    conflicts_with cask: "animeko"
     depends_on macos: ">= :catalina"
 
     app "Ani.app"
 
     zap trash: [
-        "~/Library/Application Support/me.Him188.Ani",
-        "~/Library/Caches/me.Him188.Ani",
-        "~/Library/Preferences/me.him188.ani.app.desktop.plist",
+      "~/Library/Application Support/me.Him188.Ani",
+      "~/Library/Caches/me.Him188.Ani",
+      "~/Library/Preferences/me.him188.ani.app.desktop.plist",
     ]
 end
