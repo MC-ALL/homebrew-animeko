@@ -2,15 +2,14 @@ cask "animeko" do
     arch arm:   "aarch64",
          intel: "x86_64"
 
-    version "5.2.0"
-    sha256 arm:   "e3d1eb0b93c071e4da7d71733f2b07951c02a1542b73ed74d9fef450a0e70e04",
-           intel: "ec068a318ca99d7e01fd21d3027eaa2274e4dfaaa8c2d29244e20b042c397e62"
+    version "5.3.1"
+    sha256 arm:   "95c8f953fc3ea81a8ed28800f3742afa0db2f90568426211232a1382e0568db6",
+           intel: "fdf24bc06269d7cbe677b90878a61a20cfa1433d88f77b6fc26dc9e33b3b1a08"
 
     on_arm do
         url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg",
             verified: "github.com/open-ani/animeko/releases/"
     end
-  
     on_intel do
         url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
             verified: "github.com/open-ani/animeko/releases/"
@@ -24,7 +23,7 @@ cask "animeko" do
         strategy :github_latest
     end
 
-    auto_updates true    
+    auto_updates true
     conflicts_with cask: "animeko@alpha"
     depends_on macos: ">= :catalina"
 
