@@ -84,7 +84,7 @@ jobs:
 
             JSON_STRING=$(jq -n --arg name "${{ matrix.cask_name }}" --arg ver "$CLEAN_VERSION" '{"cask_name": $name, "version": $ver}')
             
-            echo "$JSON_STRING" > summary.json            
+            echo "$JSON_STRING" > summary_${{ matrix.release_type }}.json            
             echo "update_required=true" >> $GITHUB_OUTPUT
 
           else
@@ -99,7 +99,7 @@ jobs:
         if: steps.summary.outputs.update_required == 'true'
         with:
           name: update_required_${{ matrix.release_type }}
-          path: summary.json
+          path: summary_${{ matrix.release_type }}.json
           retention-days: 1
 
   collect:
