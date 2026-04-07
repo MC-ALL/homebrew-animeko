@@ -1,37 +1,37 @@
 cask "animeko" do
-    arch arm:   "aarch64",
-         intel: "x86_64"
+  arch arm:   "aarch64",
+       intel: "x86_64"
 
-    version "5.3.2"
-    sha256 arm:   "d3bac466fa7c8bb331beb279ffab0ab300508fbd26535fd01e8ae3bf700f7e7d",
-           intel: "accbfbb439f9d92b15952ff74d8c6a8bd13dfa56735f3bd86db18267e3b650bd"
+  version "5.4.0"
+  sha256 arm:   "4c00e7b73cd1f84b0df7a5e225eb5b771568e7eac7ff2b559c36e11ececad253",
+         intel: "670bdfa285f57821d6835e12813fd112636df7ec202370c2e763d3003a257732"
 
-    on_arm do
-        url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg",
-            verified: "github.com/open-ani/animeko/releases/"
-    end
-    on_intel do
-        url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
-            verified: "github.com/open-ani/animeko/releases/"
-    end
+  on_arm do
+    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg",
+        verified: "github.com/open-ani/animeko/releases/"
+  end
+  on_intel do
+    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
+        verified: "github.com/open-ani/animeko/releases/"
+  end
 
-    name "Animeko"
-    desc "集找番、追番、看番的一站式弹幕追番平台"
-    homepage "https://animeko.org/"
+  name "Animeko"
+  desc "集找番、追番、看番的一站式弹幕追番平台"
+  homepage "https://animeko.org/"
 
-    livecheck do
-        strategy :github_latest
-    end
+  livecheck do
+    strategy :github_latest
+  end
 
-    auto_updates true
-    conflicts_with cask: "animeko@alpha"
-    depends_on macos: ">= :catalina"
+  auto_updates true
+  conflicts_with cask: "animeko@alpha"
+  depends_on macos: ">= :catalina"
 
-    app "Ani.app"
+  app "Ani.app"
 
-    zap trash: [
-      "~/Library/Application Support/me.Him188.Ani",
-      "~/Library/Caches/me.Him188.Ani",
-      "~/Library/Preferences/me.him188.ani.app.desktop.plist",
-    ]
+  zap trash: [
+    "~/Library/Application Support/me.Him188.Ani",
+    "~/Library/Caches/me.Him188.Ani",
+    "~/Library/Preferences/me.him188.ani.app.desktop.plist",
+  ]
 end
