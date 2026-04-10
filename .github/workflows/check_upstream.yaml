@@ -59,7 +59,17 @@ jobs:
           
           STABLE_VERSION="$CANDIDATE_VERSION"
           
-          WINNER=$(echo -e "$STABLE_VERSION\n$ALPHA_VERSION" | sort -V | tail -n 1)
+          WINNER=$(python3 -c "
+          import re
+          def key(v):
+              v = v.lstrip('v')
+              m = re.match(r'(\d+)\.(\d+)\.(\d+)(?:-(.*))?' , v)
+              base = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+              pre = m.group(4)
+              return (base, (1,)) if pre is None else (base, (0, pre))
+          vs = ['$STABLE_VERSION', '$ALPHA_VERSION']
+          print(max(vs, key=key))
+          ")
 
           if [ "$WINNER" == "$ALPHA_VERSION" ]; then
               FINAL_CHOICE="$ALPHA_VERSION"
