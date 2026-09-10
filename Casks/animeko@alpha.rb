@@ -7,12 +7,10 @@ cask "animeko@alpha" do
          intel: "9cc2f9abd11b402757045cfbb27f3c27cc48bdd32fc16784fab429d50dd8f98b"
 
   on_arm do
-    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg",
-        verified: "github.com/open-ani/animeko/releases/"
+    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg"
   end
   on_intel do
-    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip",
-        verified: "github.com/open-ani/animeko/releases/"
+    url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.zip"
   end
 
   name "Animeko"
