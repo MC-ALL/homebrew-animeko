@@ -23,7 +23,7 @@ cask "animeko" do
 
   auto_updates true
   conflicts_with cask: "animeko@alpha"
-  depends_on macos: :catalina
+  depends_on :macos
 
   app "Ani.app"
 
