@@ -2,9 +2,9 @@ cask "animeko@alpha" do
   arch arm:   "aarch64",
        intel: "x86_64"
 
-  version "6.3.0-beta01"
-  sha256 arm:   "615e1794dd001171bf5c19b2df79ce25f1e156dacbd412799bb5a5bf050cad09",
-         intel: "48ce1e19425b0913a9540fcad418b7348624a1d4c26a3fef9e57c5b4797e6b4b"
+  version "6.3.0"
+  sha256 arm:   "a848920dfa1a193eacbf253b41ada9e723054798c31df17c74efa29575a3864a",
+         intel: "8c703ad2e9bd3ee5a823a1e1903ce136725bb71145aa965aecb4b4dd5d15d0f8"
 
   on_arm do
     url "https://github.com/open-ani/animeko/releases/download/v#{version}/ani-#{version}-macos-#{arch}.dmg"
